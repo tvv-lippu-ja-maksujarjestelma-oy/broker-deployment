@@ -1,0 +1,5 @@
+---
+#Azure deployment related variables
+
+az_aks_rg_name: "{{az_environment}}-aks-rg"
+az_aks_name: "{{az_environment}}-aks"

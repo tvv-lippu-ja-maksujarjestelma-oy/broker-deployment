@@ -1,0 +1,10 @@
+---
+- name: "Create {{ az_aks_rg_name }}"
+  command: "az group create --name {{ az_aks_rg_name }} --location westeurope"
+  delegate_to: localhost
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: "Create {{ az_aks_name }}"
+  command: "az aks create --resource-group {{ az_aks_rg_name }} --name {{ az_aks_name }} --node-count {{ az_aks_node_count}} --enable-addons monitoring --generate-ssh-keys"
+  delegate_to: localhost
+  ignore_errors: "{{ ansible_check_mode }}"

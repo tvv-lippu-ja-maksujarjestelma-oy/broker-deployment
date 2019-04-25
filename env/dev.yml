@@ -1,0 +1,5 @@
+---
+#dev specific variables
+
+az_environment: "dev"
+az_aks_node_count: 2

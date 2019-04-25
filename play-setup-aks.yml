@@ -1,0 +1,7 @@
+- name: Create a key vault
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  roles:
+    - role: aks-setup
