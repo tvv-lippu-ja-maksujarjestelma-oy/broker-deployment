@@ -1,0 +1,18 @@
+---
+- name: decrypt admin password
+  replace:
+    dest="{{ role_path }}/files/emqx.yml"
+    regexp='emqxadminpassword'
+    replace="{{emqx_admin_password}}"
+  tags:
+    - decrypt
+    - deploy
+
+- name: encrypt admin password
+  replace:
+    dest="{{ role_path }}/files/emqx.yml"
+    regexp="{{emqx_admin_password}}"
+    replace='emqxadminpassword'
+  tags:
+    - encrypt
+    - deploy

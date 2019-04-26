@@ -47,4 +47,16 @@ spec:
           value: ip
         - name: EMQX_CLUSTER__K8S__APP_NAME
           value: emqx
+        - name: EMQX_AUTH__USER__1__username
+          value: admin
+        - name: EMQX_AUTH__USER__1__password
+          value: emqxadminpassword
+        - name: EMQX_AUTH__USER__2__username
+          value: user
+        - name: EMQX_AUTH__USER__2__password
+          value: userpass
+        - name: EMQX_MQTT__ALLOW_ANONYMOUS
+          value: false
+        - name: EMQX_LOADED_PLUGINS
+          value: emqx_recon,emqx_retainer,emqx_management,emqx_dashboard,emqx_auth_username
         tty: true
