@@ -4,14 +4,23 @@ metadata:
   name: emqx
 spec:
   ports:
-  - port: 32333
-    nodePort: 32333
-    targetPort:  emqx-dashboard
-    protocol: TCP
+  - port: 1883
+    name: mqtt-public
+  - port: 8083
+    name: websocket
+  - port: 8084
+    name: secwebsocket
+  - port: 8883
+    name: mqtt-tls
+    targetPort: 1883
+  - port: 80
+    name: websockets
+    targetPort: 8083
+  - port: 443
+    name: secwebsockets
+    targetPort: 8083  
   selector:
     app: emqx
-  type: NodePort
-
 ---
 apiVersion: extensions/v1beta1
 kind: Deployment
@@ -20,12 +29,16 @@ metadata:
   labels:
         app: emqx
 spec:
+  selector:
+    matchLabels:
+      app: emqx
   replicas: 2
   template:
     metadata:
       labels:
         app: emqx
     spec:
+      serviceAccountName: access-api
       containers:
       - name: emqx
         image: emqx/emqx:latest
@@ -34,29 +47,363 @@ spec:
           containerPort: 18083
         env:
         - name: EMQX_CLUSTER__DISCOVERY
-          value: k8s
+          value: "k8s"
         - name: EMQX_NAME
-          value: emqx
+          value: "emqx"
         - name: EMQX_CLUSTER__K8S__APISERVER
-          value: http://172.31.19.161:8080
+          value: "https://dev-aks-cgi-dev-rg-89a5f1-371381fb.hcp.westeurope.azmk8s.io"
         - name: EMQX_CLUSTER__K8S__NAMESPACE
-          value: default
+          value: "default"
         - name: EMQX_CLUSTER__K8S__SERVICE_NAME
-          value: emqx
+          value: "emqx"
         - name: EMQX_CLUSTER__K8S__ADDRESS_TYPE
-          value: ip
+          value: "ip"
         - name: EMQX_CLUSTER__K8S__APP_NAME
-          value: emqx
+          value: "emqx"
         - name: EMQX_AUTH__USER__1__username
-          value: admin
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: username.txt
         - name: EMQX_AUTH__USER__1__password
-          value: emqxadminpassword
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: passwrod.txt
         - name: EMQX_AUTH__USER__2__username
-          value: user
+          value: "user"
         - name: EMQX_AUTH__USER__2__password
-          value: userpass
+          value: "userpass"
         - name: EMQX_MQTT__ALLOW_ANONYMOUS
-          value: false
+          value: "false"
         - name: EMQX_LOADED_PLUGINS
-          value: emqx_recon,emqx_retainer,emqx_management,emqx_dashboard,emqx_auth_username
+          value: "emqx_recon,emqx_retainer,emqx_management,emqx_dashboard,emqx_auth_username"
         tty: true
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: tampere-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tampere-publisher
+  template:
+    metadata:
+      labels:
+        app: tampere-publisher
+    spec:
+      containers:
+      - name: gtfsrthttp2mqtt
+        image: hsldevcom/gtfsrthttp2mqtt:latest
+        imagePullPolicy: "Always"
+        env:
+        - name: MQTT_BROKER_URL
+          value: "emqx"
+        - name: USERNAME
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: username.txt
+        - name: PASSWORD
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: passwrod.txt
+        - name: FEED_NAME
+          value: "tampere"
+        - name: FEED_TYPE
+          value: "vp"
+        - name: FEED_URL     
+          valueFrom:
+           configMapKeyRef:
+             name: feed-urls
+             key: tampere
+        - name: INTERVAL
+          value: "10"
+        - name: ROUTE_ID_REMOVE_LAST
+          value: "4"
+
+---  
+apiVersion: v1
+kind: Service
+metadata:
+  name: tampere-publisher
+spec:
+  ports:
+  - name: "tampere-publisher-service"
+    port: 3000
+  selector:
+    app: tampere-publisher
+---    
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: linkki-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: linkki-publisher
+  template:
+    metadata:
+      labels:
+        app: linkki-publisher
+    spec:
+      containers:
+      - name: gtfsrthttp2mqtt
+        image: hsldevcom/gtfsrthttp2mqtt:latest
+        imagePullPolicy: "Always"
+        env:
+        - name: MQTT_BROKER_URL
+          value: "emqx"
+        - name: USERNAME
+          valueFrom:
+           secretKeyRef:
+            name: admin-us-ps
+            key: username.txt
+        - name: PASSWORD
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: passwrod.txt
+        - name: FEED_NAME
+          value: "LINKKI"
+        - name: FEED_TYPE
+          value: "vp"
+        - name: FEED_URL
+          valueFrom:
+           configMapKeyRef:
+             name: feed-urls
+             key: linkki
+        - name: INTERVAL
+          value: "10"
+---  
+apiVersion: v1
+kind: Service
+metadata:
+  name: linkki-publisher
+spec:
+  ports:
+  - name: "linkki-publisher-service"
+    port: 3001
+  selector:
+    app: linkki-publisher
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: lappeenranta-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lappeenranta-publisher
+  template:
+    metadata:
+      labels:
+        app: lappeenranta-publisher
+    spec:
+      containers:
+      - name: gtfsrthttp2mqtt
+        image: hsldevcom/gtfsrthttp2mqtt:latest
+        imagePullPolicy: "Always"
+        env:
+        - name: MQTT_BROKER_URL
+          value: "emqx"
+        - name: USERNAME
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: username.txt
+        - name: PASSWORD
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: passwrod.txt
+        - name: FEED_NAME
+          value: "Lappeenranta"
+        - name: FEED_TYPE
+          value: "vp"
+        - name: FEED_URL
+          valueFrom:
+           configMapKeyRef:
+             name: feed-urls
+             key: lappeenranta
+        - name: INTERVAL
+          value: "10"
+---  
+apiVersion: v1
+kind: Service
+metadata:
+  name: lappeenranta-publisher
+spec:
+  ports:
+  - name: "lappeenranta-publisher-service"
+    port: 3002
+  selector:
+    app: lappeenranta-publisher
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: joensuu-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: joensuu-publisher
+  template:
+    metadata:
+      labels:
+        app: joensuu-publisher
+    spec:
+      containers:
+      - name: gtfsrthttp2mqtt
+        image: hsldevcom/gtfsrthttp2mqtt:latest
+        imagePullPolicy: "Always"
+        env:
+        - name: MQTT_BROKER_URL
+          value: "emqx"
+        - name: USERNAME
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: username.txt
+        - name: PASSWORD
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: passwrod.txt
+        - name: FEED_NAME
+          value: "Joensuu"
+        - name: FEED_TYPE
+          value: "vp"
+        - name: FEED_URL
+          valueFrom:
+           configMapKeyRef:
+             name: feed-urls
+             key: joensuu
+        - name: INTERVAL
+          value: "10"
+---  
+apiVersion: v1
+kind: Service
+metadata:
+  name: joensuu-publisher
+spec:
+  ports:
+  - name: "joensuu-publisher-service"
+    port: 3003
+  selector:
+    app: joensuu-publisher
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kuopio-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kuopio-publisher
+  template:
+    metadata:
+      labels:
+        app: kuopio-publisher
+    spec:
+      containers:
+      - name: gtfsrthttp2mqtt
+        image: hsldevcom/gtfsrthttp2mqtt:latest
+        imagePullPolicy: "Always"
+        env:
+        - name: MQTT_BROKER_URL
+          value: "emqx"
+        - name: USERNAME
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: username.txt
+        - name: PASSWORD
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: passwrod.txt
+        - name: FEED_NAME
+          value: "Kuopio"
+        - name: FEED_TYPE
+          value: "vp"
+        - name: FEED_URL
+          valueFrom:
+           configMapKeyRef:
+             name: feed-urls
+             key: kuopio
+        - name: INTERVAL
+          value: "10"
+---  
+apiVersion: v1
+kind: Service
+metadata:
+  name: kuopio-publisher
+spec:
+  ports:
+  - name: "kuopio-publisher-service"
+    port: 3004
+  selector:
+    app: kuopio-publisher
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: lahti-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lahti-publisher
+  template:
+    metadata:
+      labels:
+        app: lahti-publisher
+    spec:
+      containers:
+      - name: gtfsrthttp2mqtt
+        image: hsldevcom/gtfsrthttp2mqtt:latest
+        imagePullPolicy: "Always"
+        env:
+        - name: MQTT_BROKER_URL
+          value: "emqx"
+        - name: USERNAME
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: username.txt
+        - name: PASSWORD
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: passwrod.txt
+        - name: FEED_NAME
+          value: "Lahti"
+        - name: FEED_TYPE
+          value: "vp"
+        - name: FEED_URL
+          valueFrom:
+           configMapKeyRef:
+             name: feed-urls
+             key: lahti
+        - name: INTERVAL
+          value: "10"
+---  
+apiVersion: v1
+kind: Service
+metadata:
+  name: lahti-publisher
+spec:
+  ports:
+  - name: "lahti-publisher-service"
+    port: 3005
+  selector:
+    app: lahti-publisher
+---
