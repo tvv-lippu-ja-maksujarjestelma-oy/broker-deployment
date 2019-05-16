@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: emqx
+spec:
+  ports:
+  - port: 1883
+    name: mqtt-public
+  - port: 8083
+    name: websocket
+  - port: 8084
+    name: secwebsocket
+  - port: 8883
+    name: mqtt-tls
+    targetPort: 1883
+  - port: 80
+    name: websockets
+    targetPort: 8083
+  - port: 443
+    name: secwebsockets
+    targetPort: 8083  
+  selector:
+    app: emqx
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: emqx
+  labels:
+        app: emqx
+spec:
+  selector:
+    matchLabels:
+      app: emqx
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: emqx
+    spec:
+      serviceAccountName: access-api
+      containers:
+      - name: emqx
+        image: emqx/emqx:latest
+        ports:
+        - name: emqx-dashboard
+          containerPort: 18083
+        env:
+        - name: EMQX_CLUSTER__DISCOVERY
+          value: "k8s"
+        - name: EMQX_NAME
+          value: "emqx"
+        - name: EMQX_CLUSTER__K8S__APISERVER
+          value: "https://dev-aks-cgi-dev-rg-89a5f1-371381fb.hcp.westeurope.azmk8s.io"
+        - name: EMQX_CLUSTER__K8S__NAMESPACE
+          value: "default"
+        - name: EMQX_CLUSTER__K8S__SERVICE_NAME
+          value: "emqx"
+        - name: EMQX_CLUSTER__K8S__ADDRESS_TYPE
+          value: "ip"
+        - name: EMQX_CLUSTER__K8S__APP_NAME
+          value: "emqx"
+        - name: EMQX_AUTH__USER__1__username
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: username.txt
+        - name: EMQX_AUTH__USER__1__password
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: passwrod.txt
+        - name: EMQX_AUTH__USER__2__username
+          value: "user"
+        - name: EMQX_AUTH__USER__2__password
+          value: "userpass"
+        - name: EMQX_MQTT__ALLOW_ANONYMOUS
+          value: "false"
+        - name: EMQX_LOADED_PLUGINS
+          value: "emqx_recon,emqx_retainer,emqx_management,emqx_dashboard,emqx_auth_username"
+        tty: true
