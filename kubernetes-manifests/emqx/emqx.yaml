@@ -39,6 +39,16 @@ spec:
         app: emqx
     spec:
       serviceAccountName: access-api
+#      affinity:
+#        podAntiAffinity:
+#          requiredDuringSchedulingIgnoredDuringExecution:
+#          - labelSelector:
+#              matchExpressions:
+#              - key: app
+#                operator: In
+#                values:
+#                - emqx
+#            topologyKey: "kubernetes.io/hostname" 
       containers:
       - name: emqx
         image: emqx/emqx:latest
@@ -77,5 +87,5 @@ spec:
         - name: EMQX_MQTT__ALLOW_ANONYMOUS
           value: "false"
         - name: EMQX_LOADED_PLUGINS
-          value: "emqx_recon,emqx_retainer,emqx_management,emqx_dashboard,emqx_auth_username"
+          value: "emqx_recon,emqx_management, emqx_auth_username"
         tty: true

@@ -20,6 +20,15 @@ apiVersion: v1
 data:
     dynamic-scaling: "true"
     backend-server-slots-increment: "4"
+    timeout-connect: "120s"
+    timeout-client: "200s"
+    timeout-server: "120s"
+    max-connections: "500000"
+    ssl-dh-default-max-size: "2048"
+    nbroc-ssl: "2"
+    cpu-map: "1 0"
+    cpu-map: "2 1"
+
 kind: ConfigMap
 metadata:
   name: haproxy-configmap
