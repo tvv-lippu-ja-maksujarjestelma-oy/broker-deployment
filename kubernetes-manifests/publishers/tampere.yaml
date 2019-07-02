@@ -18,7 +18,7 @@ spec:
         imagePullPolicy: "Always"
         env:
         - name: MQTT_BROKER_URL
-          value: "dev-mqtt.lmj.fi"
+          value: "emqx"
         - name: USERNAME
           valueFrom:
            secretKeyRef:
@@ -39,9 +39,9 @@ spec:
              name: feed-urls
              key: tampere
         - name: INTERVAL
-          value: "10"
-        - name: ROUTE_ID_REMOVE_LAST
-          value: "4"
+          value: "3"
+#        - name: ROUTE_ID_REMOVE_LAST
+#          value: "4"
 
 ---  
 apiVersion: v1

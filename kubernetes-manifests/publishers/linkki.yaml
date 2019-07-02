@@ -18,7 +18,7 @@ spec:
         imagePullPolicy: "Always"
         env:
         - name: MQTT_BROKER_URL
-          value: "dev-mqtt.lmj.fi"
+          value: "emqx"
         - name: USERNAME
           valueFrom:
            secretKeyRef:

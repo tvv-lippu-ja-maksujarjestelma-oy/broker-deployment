@@ -52,18 +52,24 @@ spec:
         run: haproxy-ingress
     spec:
       serviceAccountName: haproxy-ingress
+      volumes:
+      - name: secret-mount
+        secret:
+           secretName: star-lmj-pem
+      - name: digisecret-mount
+        secret:
+           secretName: star-digitransit-pem
+      - name: haconfig
+        configMap: 
+           name: haproxy-config
       containers:
-      - name: haproxy-ingress
-        image: quay.io/jcmoraisjr/haproxy-ingress
-        args:
-        - --default-backend-service=$(POD_NAMESPACE)/emqx
-        - --default-ssl-certificate=default/tls-sceret
-        - --configmap=$(POD_NAMESPACE)/haproxy-configmap
-        - --tcp-services-configmap=$(POD_NAMESPACE)/haproxy-tcp
-        - --reload-strategy=native
+      - name: haproxy
+        image: haproxy
         ports:
         - name: http
           containerPort: 80
+        - name: websocketsecure
+          containerPort: 8443
         - name: https
           containerPort: 443
         - name: stat
@@ -72,6 +78,16 @@ spec:
           containerPort: 1883
         - name: mqtt-testing
           containerPort: 8883
+        volumeMounts:
+        - name: secret-mount
+          mountPath: "/etc/ssl/private/lmj"
+          readOnly: true
+        - name: digisecret-mount
+          mountPath: "/etc/ssl/private/digitransit"
+          readOnly: true
+        - name: haconfig
+          mountPath: "/usr/local/etc/haproxy"
+          readOnly: true
         env:
         - name: POD_NAME
           valueFrom:
@@ -97,6 +113,8 @@ spec:
     name: mqtt-public
     targetPort: 1883  
 #    protocol: TCP
+  - port: 8443
+    name: websocketsecure 
   - port: 8883
     name: mqtt-tls
     targetPort: 8883
@@ -111,29 +129,29 @@ spec:
   selector:
     run: haproxy-ingress
 ---
-apiVersion: extensions/v1beta1
-kind: Ingress
-metadata:
-  name: app
-spec:
-  tls:
-   - hosts:
-     - dev-mqtt.lmj.fi
-     - tremonitori.digitransit.fi
-     secretName: tls-sceret
-     secretName: digitransit-secret
-  rules:
-    - host: dev-mqtt.lmj.fi
-      http:
-        paths:
+#apiVersion: extensions/v1beta1
+#kind: Ingress
+#metadata:
+##  name: app
+#spec:
+#  tls:
+#   - hosts:
+#     - dev-mqtt.lmj.fi
+#     - tremonitori.digitransit.fi
+#     secretName: tls-sceret
+#     secretName: digitransit-secret
+#  rules:
+#    - host: dev-mqtt.lmj.fi
+#      http:
+#        paths:
 #      - path: /
-          - backend:
-              serviceName: emqx
-              servicePort: 8083  
-    - host: tremonitori.digitransit.fi
-      http: 
-        paths:
+#          - backend:
+#              serviceName: emqx
+#              servicePort: 8083  
+#    - host: tremonitori.digitransit.fi
+#      http: 
+#        paths:
 #      - path: /
-          - backend:
-              serviceName: tampere-virtualmonitor-service
-              servicePort: 3000         
+#          - backend:
+#              serviceName: tampere-virtualmonitor-service
+#              servicePort: 3000         

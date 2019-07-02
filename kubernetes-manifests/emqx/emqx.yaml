@@ -39,19 +39,21 @@ spec:
         app: emqx
     spec:
       serviceAccountName: access-api
-#      affinity:
-#        podAntiAffinity:
-#          requiredDuringSchedulingIgnoredDuringExecution:
-#          - labelSelector:
-#              matchExpressions:
-#              - key: app
-#                operator: In
-#                values:
-#                - emqx
-#            topologyKey: "kubernetes.io/hostname" 
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - emqx
+            topologyKey: "kubernetes.io/hostname" 
       containers:
       - name: emqx
-        image: emqx/emqx:latest
+       # image: emqx/emqx:v3.2-beta.1
+        image: lmj01/emqx-docker
+        imagePullPolicy: Always
         ports:
         - name: emqx-dashboard
           containerPort: 18083
@@ -64,6 +66,11 @@ spec:
           value: "https://dev-aks-cgi-dev-rg-89a5f1-371381fb.hcp.westeurope.azmk8s.io"
         - name: EMQX_CLUSTER__K8S__NAMESPACE
           value: "default"
+        - name: EMQX_NODE__COOKIE
+          valueFrom:
+           configMapKeyRef:
+            name: emqx-config
+            key: cookie
         - name: EMQX_CLUSTER__K8S__SERVICE_NAME
           value: "emqx"
         - name: EMQX_CLUSTER__K8S__ADDRESS_TYPE
@@ -87,5 +94,5 @@ spec:
         - name: EMQX_MQTT__ALLOW_ANONYMOUS
           value: "false"
         - name: EMQX_LOADED_PLUGINS
-          value: "emqx_recon,emqx_management, emqx_auth_username"
+          value: "emqx_recon,emqx_management,emqx_auth_username"
         tty: true
