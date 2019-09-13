@@ -1,0 +1,51 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: foli-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: foli-publisher
+  template:
+    metadata:
+      labels:
+        app: foli-publisher
+    spec:
+      containers:
+      - name: gtfsrthttp2mqtt
+        image: hsldevcom/gtfsrthttp2mqtt:latest
+        imagePullPolicy: "Always"
+        env:
+        - name: MQTT_BROKER_URL
+          value: "emqx"
+        - name: USERNAME
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: username.txt
+        - name: PASSWORD
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: passwrod.txt
+        - name: FEED_NAME
+          value: "FOLI"
+        - name: FEED_TYPE
+          value: "vp"
+        - name: FEED_URL
+          value: "https://foli-beta.nanona.fi/gtfs-rt/reittiopas"
+        - name: INTERVAL
+          value: "10"
+---  
+apiVersion: v1
+kind: Service
+metadata:
+  name: foli-publisher
+spec:
+  ports:
+  - name: "foli-publisher-service"
+    port: 3003
+  selector:
+    app: foli-publisher
+---
