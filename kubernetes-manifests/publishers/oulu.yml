@@ -1,0 +1,51 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: oulu-publisher
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oulu-publisher
+  template:
+    metadata:
+      labels:
+        app: oulu-publisher
+    spec:
+      containers:
+      - name: gtfsrthttp2mqtt
+        image: hsldevcom/gtfsrthttp2mqtt:latest
+        imagePullPolicy: "Always"
+        env:
+        - name: MQTT_BROKER_URL
+          value: "emqx"
+        - name: USERNAME
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: username.txt
+        - name: PASSWORD
+          valueFrom:
+           secretKeyRef:
+             name: admin-us-ps
+             key: passwrod.txt
+        - name: FEED_NAME
+          value: "OULU"
+        - name: FEED_TYPE
+          value: "vp"
+        - name: FEED_URL
+          value: "http://92.62.36.215/RTIX/vehicle-position"
+        - name: INTERVAL
+          value: "10"
+---  
+apiVersion: v1
+kind: Service
+metadata:
+  name: oulu-publisher
+spec:
+  ports:
+  - name: "oulu-publisher-service"
+    port: 3003
+  selector:
+    app: oulu-publisher
+---
