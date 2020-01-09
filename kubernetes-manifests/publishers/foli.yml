@@ -34,7 +34,7 @@ spec:
         - name: FEED_TYPE
           value: "vp"
         - name: FEED_URL
-          value: "https://foli-beta.nanona.fi/gtfs-rt/reittiopas"
+          value: "https://data.foli.fi/gtfs-rt/reittiopas"
         - name: INTERVAL
           value: "10"
 ---  
