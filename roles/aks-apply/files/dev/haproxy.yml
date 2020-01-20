@@ -83,29 +83,3 @@ spec:
   selector:
     run: haproxy-ingress
 ---
-#apiVersion: extensions/v1beta1 #TODO change to networking.k8s.io/v1beta1
-#kind: Ingress
-#metadata:
-##  name: app
-#spec:
-#  tls:
-#   - hosts:
-#     - dev-mqtt.lmj.fi
-#     - tremonitori.digitransit.fi
-#     secretName: tls-sceret
-#     secretName: digitransit-secret
-#  rules:
-#    - host: dev-mqtt.lmj.fi
-#      http:
-#        paths:
-#      - path: /
-#          - backend:
-#              serviceName: emqx
-#              servicePort: 8083  
-#    - host: tremonitori.digitransit.fi
-#      http: 
-#        paths:
-#      - path: /
-#          - backend:
-#              serviceName: tampere-virtualmonitor-service
-#              servicePort: 3000         
