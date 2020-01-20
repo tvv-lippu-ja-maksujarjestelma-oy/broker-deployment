@@ -1,39 +1,9 @@
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: haproxy-tcp
-  namespace: default
-data:
-  "1883": "default/emqx:1883"
-  "8883": "default/emqx:1883"
-  "80": "default/emqx:8083"
-  "443": "default/emqx:8083::default/tls-sceret"
 ---  
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: haproxy-ingress
   namespace: default
----
-apiVersion: v1
-data:
-    timeout-connect: "120s"
-    timeout-client: "200s"
-    timeout-server: "120s"
-    max-connections: "500000"
-    hsts: "false"
- #   ssl-options: "no-sslv3 no-tls-tickets force-tlsv12"
- #   ssl-ciphers: "!EDH:!RC4:!ADH:!DSS:HIGH:+AES128:+AES256-SHA256:+AES128-SHA256:+SHA:!3DES:!aNULL:!eNULL"
-    ssl-dh-default-max-size: "2048"
-    nbroc-ssl: "2"
-    cpu-map: "1 0"
-    cpu-map: "2 1"
-
-
-kind: ConfigMap
-metadata:
-  name: haproxy-configmap
 ---
 apiVersion: apps/v1
 kind: Deployment
