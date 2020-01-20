@@ -1,7 +1,7 @@
-- name: Decrypt deployment secrets
+- name: "Apply manifest(s)"
   hosts: localhost
   connection: local
   gather_facts: false
 
   roles:
-    - role: aks-deployment
+    - role: aks-apply

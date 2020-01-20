@@ -6,7 +6,7 @@ Create an env file
 * az_environment defines name of the environment (used for naming resources in Azure)
 * az_aks_node_count defines number of nodes in the AKS cluster
 
-Run `ansible-playbook play-setup-aks.yml -e @env/<name of the env file>`
+Run `ansible-playbook play_setup_aks.yml -e @env/<name of the env file>`
 
 ## Managing Kubernetes deployment secrets
 
