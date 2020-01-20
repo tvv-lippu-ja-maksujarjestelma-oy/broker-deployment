@@ -37,15 +37,3 @@ spec:
           value: "http://92.62.36.215/RTIX/vehicle-position"
         - name: INTERVAL
           value: "10"
----  
-apiVersion: v1
-kind: Service
-metadata:
-  name: oulu-publisher
-spec:
-  ports:
-  - name: "oulu-publisher-service"
-    port: 3003
-  selector:
-    app: oulu-publisher
----

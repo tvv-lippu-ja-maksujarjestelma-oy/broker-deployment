@@ -40,15 +40,3 @@ spec:
              key: linkki
         - name: INTERVAL
           value: "10"
----  
-apiVersion: v1
-kind: Service
-metadata:
-  name: linkki-publisher
-spec:
-  ports:
-  - name: "linkki-publisher-service"
-    port: 3001
-  selector:
-    app: linkki-publisher
----
