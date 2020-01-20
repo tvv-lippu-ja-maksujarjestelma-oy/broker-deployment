@@ -22,7 +22,7 @@ spec:
   selector:
     app: emqx
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: emqx
@@ -80,7 +80,7 @@ spec:
           value: "emqx_recon,emqx_retainer,emqx_management,emqx_dashboard,emqx_auth_username"
         tty: true
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tampere-publisher
@@ -137,7 +137,7 @@ spec:
   selector:
     app: tampere-publisher
 ---    
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: linkki-publisher
@@ -191,7 +191,7 @@ spec:
   selector:
     app: linkki-publisher
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: lappeenranta-publisher
@@ -245,7 +245,7 @@ spec:
   selector:
     app: lappeenranta-publisher
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: joensuu-publisher
@@ -299,7 +299,7 @@ spec:
   selector:
     app: joensuu-publisher
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kuopio-publisher
@@ -353,7 +353,7 @@ spec:
   selector:
     app: kuopio-publisher
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: lahti-publisher
