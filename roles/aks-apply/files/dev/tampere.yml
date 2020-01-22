@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: linkki-publisher
+  name: tampere-publisher
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: linkki-publisher
+      app: tampere-publisher
   template:
     metadata:
       labels:
-        app: linkki-publisher
+        app: tampere-publisher
     spec:
       containers:
       - name: gtfsrthttp2mqtt
@@ -22,33 +22,24 @@ spec:
         - name: USERNAME
           valueFrom:
            secretKeyRef:
-            name: admin-us-ps
-            key: username.txt
+             name: admin-us-ps
+             key: username.txt
         - name: PASSWORD
           valueFrom:
            secretKeyRef:
              name: admin-us-ps
              key: passwrod.txt
         - name: FEED_NAME
-          value: "LINKKI"
+          value: "tampere"
         - name: FEED_TYPE
           value: "vp"
-        - name: FEED_URL
+        - name: FEED_URL     
           valueFrom:
            configMapKeyRef:
              name: feed-urls
-             key: linkki
+             key: tampere
         - name: INTERVAL
-          value: "10"
----  
-apiVersion: v1
-kind: Service
-metadata:
-  name: linkki-publisher
-spec:
-  ports:
-  - name: "linkki-publisher-service"
-    port: 3001
-  selector:
-    app: linkki-publisher
----
+          value: "3"
+#        - name: ROUTE_ID_REMOVE_LAST
+#          value: "4"
+  

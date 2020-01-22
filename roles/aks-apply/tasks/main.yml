@@ -1,0 +1,38 @@
+---
+- name: "Configure kubectl to use {{az_aks_name }}"
+  command: "az aks get-credentials \
+    --resource-group {{az_aks_rg_name}} \
+    --name {{az_aks_name }}"
+  delegate_to: localhost
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- block:
+    - name: "Apply kubernetes dashboard ClusterRoleBinding"
+      command: "kubectl apply -f \
+        {{ role_path }}/files/assets/kubedashboard.yml"
+      delegate_to: localhost
+      ignore_errors: "{{ ansible_check_mode }}"
+      register: out
+
+    - debug: var=out.stdout_lines
+
+    - name: "Apply rest of manifests"
+      command: "kubectl apply -f \
+        {{ role_path }}/files/{{ az_environment }}/"
+      delegate_to: localhost
+      ignore_errors: "{{ ansible_check_mode }}"
+      register: out
+
+    - debug: var=out.stdout_lines
+  when: service is undefined
+
+- block:
+    - name: "Apply {{ service }}"
+      command: "kubectl apply -f \
+        {{ role_path }}/files/{{ az_environment }}/{{ service }}.yml"
+      delegate_to: localhost
+      ignore_errors: "{{ ansible_check_mode }}"
+      register: out
+
+    - debug: var=out.stdout_lines
+  when: service is defined

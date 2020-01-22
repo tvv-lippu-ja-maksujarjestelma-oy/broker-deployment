@@ -1,0 +1,4 @@
+configMapGenerator:
+- name: haproxy-config
+  files:
+  - haproxy-dev.conf

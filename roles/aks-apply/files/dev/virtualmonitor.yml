@@ -1,0 +1,32 @@
+---  
+apiVersion: v1
+kind: Service
+metadata:
+  name: virtualmonitor-service
+spec:
+  ports:
+  - name: "virtualmonitor-service"
+    port: 3000
+  selector:
+    app: virtualmonitor
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: virtualmonitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: virtualmonitor
+  template:
+    metadata:
+      labels:
+        app: virtualmonitor
+    spec:
+      containers:
+      - name: virtualmonitor
+        image: hsldevcom/digitransit-virtualmonitor:master
+        imagePullPolicy: "Always"
+        ports:
+         - containerPort: 3000

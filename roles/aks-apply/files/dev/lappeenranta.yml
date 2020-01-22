@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: oulu-publisher
+  name: lappeenranta-publisher
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: oulu-publisher
+      app: lappeenranta-publisher
   template:
     metadata:
       labels:
-        app: oulu-publisher
+        app: lappeenranta-publisher
     spec:
       containers:
       - name: gtfsrthttp2mqtt
@@ -30,22 +30,13 @@ spec:
              name: admin-us-ps
              key: passwrod.txt
         - name: FEED_NAME
-          value: "OULU"
+          value: "Lappeenranta"
         - name: FEED_TYPE
           value: "vp"
         - name: FEED_URL
-          value: "http://92.62.36.215/RTIX/vehicle-position"
+          valueFrom:
+           configMapKeyRef:
+             name: feed-urls
+             key: lappeenranta
         - name: INTERVAL
           value: "10"
----  
-apiVersion: v1
-kind: Service
-metadata:
-  name: oulu-publisher
-spec:
-  ports:
-  - name: "oulu-publisher-service"
-    port: 3003
-  selector:
-    app: oulu-publisher
----

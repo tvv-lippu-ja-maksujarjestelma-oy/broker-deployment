@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: joensuu-publisher
+  name: lahti-publisher
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: joensuu-publisher
+      app: lahti-publisher
   template:
     metadata:
       labels:
-        app: joensuu-publisher
+        app: lahti-publisher
     spec:
       containers:
       - name: gtfsrthttp2mqtt
@@ -30,25 +30,13 @@ spec:
              name: admin-us-ps
              key: passwrod.txt
         - name: FEED_NAME
-          value: "Joensuu"
+          value: "Lahti"
         - name: FEED_TYPE
           value: "vp"
         - name: FEED_URL
           valueFrom:
            configMapKeyRef:
              name: feed-urls
-             key: joensuu
+             key: lahti
         - name: INTERVAL
           value: "10"
----  
-apiVersion: v1
-kind: Service
-metadata:
-  name: joensuu-publisher
-spec:
-  ports:
-  - name: "joensuu-publisher-service"
-    port: 3003
-  selector:
-    app: joensuu-publisher
----
