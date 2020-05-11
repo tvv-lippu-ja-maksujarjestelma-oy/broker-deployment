@@ -21,7 +21,7 @@ spec:
            secretName: star-lmj-pem
       - name: digisecret-mount
         secret:
-           secretName: star-digitransit-chain-pem
+           secretName: star-digitransit-pem
       - name: haconfig
         configMap: 
            name: haproxy-config
