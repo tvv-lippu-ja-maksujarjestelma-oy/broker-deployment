@@ -27,7 +27,7 @@ spec:
            secretName: star-jyvaskyla-pem
       - name: haconfig
         configMap: 
-           name: haproxy-config
+           name: haproxy-config-6c2d4bcmk7
       containers:
       - name: haproxy
         image: haproxy
