@@ -22,6 +22,9 @@ spec:
       - name: digisecret-mount
         secret:
            secretName: star-digitransit-pem
+      - name: jyvaskylasecret-mount
+        secret:
+           secretName: star-jyvaskyla-pem
       - name: haconfig
         configMap: 
            name: haproxy-config
@@ -47,6 +50,9 @@ spec:
           readOnly: true
         - name: digisecret-mount
           mountPath: "/etc/ssl/private/digitransit"
+          readOnly: true
+        - name: jyvaskylasecret-mount
+          mountPath: "/etc/ssl/private/jyvaskyla"
           readOnly: true
         - name: haconfig
           mountPath: "/usr/local/etc/haproxy"
