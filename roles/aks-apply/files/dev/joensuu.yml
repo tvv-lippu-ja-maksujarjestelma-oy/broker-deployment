@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: joensuu-publisher
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: joensuu-publisher

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: tampere-publisher
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: tampere-publisher

@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: linkki-publisher
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: linkki-publisher

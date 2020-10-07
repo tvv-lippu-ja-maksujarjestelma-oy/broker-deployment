@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: foli-publisher
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: foli-publisher
