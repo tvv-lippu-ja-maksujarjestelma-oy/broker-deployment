@@ -24,7 +24,7 @@ spec:
            secretName: star-digitransit-pem
       - name: jyvaskylasecret-mount
         secret:
-           secretName: star-jyvaskyla-pem
+           secretName: star-jyvaskyla-v3-pem
       - name: haconfig
         configMap: 
            name: haproxy-config-6c2d4bcmk7
