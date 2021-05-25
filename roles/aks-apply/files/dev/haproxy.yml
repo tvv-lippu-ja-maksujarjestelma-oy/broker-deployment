@@ -30,7 +30,7 @@ spec:
            name: haproxy-config-6c2d4bcmk7
       containers:
       - name: haproxy
-        image: haproxy
+        image: haproxy:2.2.0
         ports:
         - name: http
           containerPort: 80
