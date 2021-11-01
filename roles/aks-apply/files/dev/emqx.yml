@@ -5,18 +5,6 @@ metadata:
   name: emqx
 spec:
   ports:
-  - port: 1883
-    name: mqtt-public
-  - port: 8083
-    name: websocket
-  - port: 8084
-    name: secwebsocket
-  - port: 8883
-    name: mqtt-tls
-    targetPort: 1883
-  - port: 80
-    name: websockets
-    targetPort: 8083
   - port: 443
     name: secwebsockets
     targetPort: 8083  

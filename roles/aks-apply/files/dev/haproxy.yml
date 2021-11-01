@@ -27,27 +27,14 @@ spec:
            secretName: star-jyvaskyla-v3-pem
       - name: haconfig
         configMap: 
-           name: haproxy-config-6c2d4bcmk7
+           name: haproxy-config-h72d97c6b5
       containers:
       - name: haproxy
         image: haproxy:2.2.0
         ports:
-        - name: http
-          containerPort: 80
-        - name: websocketsecure
-          containerPort: 8443
         - name: https
           containerPort: 443
-        - name: stat
-          containerPort: 1936
-        - name: mqtt-public
-          containerPort: 1883
-        - name: mqtt-testing
-          containerPort: 8883
         volumeMounts:
-        - name: secret-mount
-          mountPath: "/etc/ssl/private/lmj"
-          readOnly: true
         - name: digisecret-mount
           mountPath: "/etc/ssl/private/digitransit"
           readOnly: true
@@ -68,23 +55,10 @@ metadata:
 spec:
   ports:
   - port: 8080
-    name: virtualmonitor  
-  - port: 1883
-    name: mqtt-public
-    targetPort: 1883  
-#    protocol: TCP
-  - port: 8443
-    name: websocketsecure 
-  - port: 8883
-    name: mqtt-tls
-    targetPort: 8883
-  - port: 80
-    name: websocket
-#    targetPort: 8083
+    name: virtualmonitor
   - port: 443
     name: secwebsocket
-#    targetPort: 8083   
-  loadBalancerIP: 13.95.195.91  
+#    targetPort: 8083
   type: LoadBalancer
   selector:
     run: haproxy-ingress
