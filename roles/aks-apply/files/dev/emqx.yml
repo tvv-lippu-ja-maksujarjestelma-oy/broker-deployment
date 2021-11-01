@@ -33,7 +33,7 @@ spec:
   selector:
     matchLabels:
       app: emqx
-  replicas: 2
+  replicas: 0
   template:
     metadata:
       labels:
