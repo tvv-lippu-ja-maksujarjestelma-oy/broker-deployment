@@ -1,4 +1,4 @@
-- name: Create a key vault
+- name: Create an aks cluster
   hosts: localhost
   connection: local
   gather_facts: false
